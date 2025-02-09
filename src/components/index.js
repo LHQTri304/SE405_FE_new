@@ -24,14 +24,23 @@ import Dropdown from "./MyDropdown";
 import { LoadingFullScreen } from "./MyLoadingScreen";
 
 ///
-import { MiddleSingleMediumButton } from "./Buttons";
+import {
+  MiddleSingleMediumButton,
+  FlexButton,
+  FlexIconButton,
+} from "./Buttons";
 
 //
 import EnterMessageBar from "./EnterMessageBar";
+import QuickBackGround from "./MyBackground";
 
+//
+import Alert from "./MyAlert";
 
 export {
   MiddleSingleMediumButton,
+  FlexButton,
+  FlexIconButton,
   //
   CommonButton,
   UIHeader,
@@ -65,4 +74,7 @@ export {
   //
   //
   EnterMessageBar,
+  QuickBackGround,
+  //
+  Alert,
 };

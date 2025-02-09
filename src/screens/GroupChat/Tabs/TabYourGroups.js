@@ -16,63 +16,45 @@ import {
 } from "../../../components";
 import { images, icons, colors, fontSizes } from "../../../constants";
 import { Icon } from "../../../components";
-import { ProgressSteps, ProgressStep } from "react-native-progress-steps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   groupStudying_getAllGroupofUser,
   groupStudying_createGroup,
-  information_getAllTopics,
+  group_createNewSubject,
 } from "../../../api";
-
-import { dataGroups } from "../../../testFE";
 
 export default function TabYourGroups(props) {
   //navigation to/back
   const { navigate, goBack } = props.navigation;
 
   //initialization
-  const [groups, setGroups] = useState(dataGroups);
+  const [groups, setGroups] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
 
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupPassword, setNewGroupPassword] = useState("");
-  const [newGroupSelectedTopics, setNewGroupSelectedTopics] = useState([]);
 
-  const [activeStep, setActiveStep] = useState(0);
-  const [listTopics, setListTopics] = useState([]);
+  const fetchData = async () => {
+    try {
+      const response = await groupStudying_getAllGroupofUser();
+      setGroups(response);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      /* try {
-        const response = await groupStudying_getAllGroupofUser();
-        setGroups(response);
-        setListTopics(await information_getAllTopics());
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } */
-    };
     fetchData();
-    // // Tạo interval --> Hủy interval khi component bị unmounted
     const intervalId = setInterval(fetchData, 1000);
     return () => clearInterval(intervalId);
   }, [props.userName]);
 
-  const handlePressTopic = (topic) => {
-    setNewGroupSelectedTopics((prev) => {
-      if (prev.includes(topic)) {
-        return prev.filter((t) => t !== topic);
-      } else {
-        return [...prev, topic];
-      }
-    });
-  };
-
   const handleSelectedGroup = async (eachGroup) => {
     try {
-      /* await AsyncStorage.removeItem("groupID");
+      await AsyncStorage.removeItem("groupID");
       await AsyncStorage.setItem("groupID", eachGroup.groupID.toString());
-      await AsyncStorage.setItem("group", "chat"); */
+      await AsyncStorage.setItem("group", "chat");
       navigate("MessengerGroup", { group: eachGroup });
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -80,135 +62,43 @@ export default function TabYourGroups(props) {
   };
 
   const handleCreateGroup = async () => {
-    /* if (newGroupName.length > 8) {
-      if (newGroupSelectedTopics.length < 4) {
-        const response = await groupStudying_createGroup(
-          newGroupName,
-          newGroupPassword,
-          newGroupSelectedTopics
-        );
-        if (response.status == 200) {
-          alert(
-            "Tạo nhóm thành công, vui lòng vào nhóm mới để thêm thành viên"
-          );
-          setModalVisible(false);
-        }
-      } else {
-        alert("Chỉ được chọn tối đa 3 chủ đề");
+    if (newGroupName.length > 8) {
+      const response = await groupStudying_createGroup(
+        newGroupName,
+        newGroupPassword
+      );
+      if (response.status == 200) {
+        const response = await group_createNewSubject('blog');
+        console.log(response.data);
+        alert("Tạo nhóm thành công, vui lòng vào nhóm mới để thêm thành viên");
+        setModalVisible(false);
       }
     } else {
       alert("Nhập tối thiểu 9 ký tự cho tên nhóm");
-    } */
-  };
-
-  //style of ProgressSteps
-  const ProgressStepsStyle = {
-    borderWidth: 9,
-    activeStepIconBorderColor: colors.PrimaryBackground,
-    activeStepIconColor: colors.PrimaryContainer,
-    activeStepNumColor: colors.PrimaryOnContainerAndFixed,
-
-    completedProgressBarColor: colors.PrimaryBackground,
-    progressBarColor: colors.PrimaryContainer,
-
-    completedStepIconColor: colors.PrimaryBackground,
-    completedCheckColor: "white",
-
-    disabledStepIconColor: colors.PrimaryContainer,
-    disabledStepNumColor: colors.PrimaryContainer,
-
-    labelColor: null,
-    labelFontSize: 0,
-    activeLabelColor: null,
-    activeLabelFontSize: 0,
-
-    activeStep: activeStep,
-    //activeStep: 0,
-
-    topOffset: 10,
-    marginBottom: 15,
-  };
-
-  //style of Step_1
-  const Step_1_BasicInfo = {
-    nextBtnText: "Tiếp theo",
-    previousBtnText: null,
-    nextBtnStyle: styles.nextBtn,
-    nextBtnTextStyle: styles.nextBtnText,
-    previousBtnDisabled: true,
-  };
-
-  //style of Step_2
-  const Step_2_Topics = {
-    label: "Chọn topic (chủ đề)",
-    onSubmit: async () => {
-      handleCreateGroup();
-    },
-    previousBtnText: "Quay Lại",
-    finishBtnText: "Xong",
-    nextBtnStyle: styles.nextBtn,
-    nextBtnTextStyle: styles.nextBtnText,
-    previousBtnStyle: styles.previousBtn,
-    previousBtnTextStyle: styles.previousBtnText,
+    }
   };
 
   const renderContentCreateGroup = () => {
     return (
-      <ProgressSteps {...ProgressStepsStyle}>
-        <ProgressStep {...Step_1_BasicInfo}>
-          <View style={styles.stepAdditionalInfoView}>
-            <TextInputMediumIcon
-              inputMode={"text"}
-              name={"Tên nhóm"}
-              icon={icons.personCircleIcon}
-              placeholder={"Nhập tên nhóm mới"}
-              isPassword={false}
-              onChangeText={(text) => setNewGroupName(text)}
-            />
-            <TextInputMediumIcon
-              inputMode={"text"}
-              name={"Mật khẩu gia nhập nhóm"}
-              icon={icons.phoneRingCircleIcon}
-              placeholder={"Nhập mật khẩu mới"}
-              isPassword={true}
-              onChangeText={(text) => setNewGroupPassword(text)}
-            />
-          </View>
-        </ProgressStep>
-        <ProgressStep {...Step_2_Topics}>
-          <Text style={styles.stepAdditionalInfoTitle}>
-            Bạn quan tâm đến những gì?
-          </Text>
-          <View style={styles.listTopicsView}>
-            {listTopics.map((topic) => (
-              <TouchableOpacity
-                key={topic.topicID}
-                style={styles.eachTopicsView}
-                onPress={() => handlePressTopic(topic.topicID)}
-              >
-                <Image
-                  source={{ uri: topic.image }}
-                  style={styles.eachTopicsImage}
-                />
-
-                {newGroupSelectedTopics.includes(topic.topicID) && (
-                  <View style={styles.eachTopicsSelected} />
-                )}
-
-                <Text style={styles.eachTopicsText}>{topic.topicName}</Text>
-                {newGroupSelectedTopics.includes(topic.topicID) && (
-                  <Icon
-                    name={icons.checkMarkIcon}
-                    size={24}
-                    color={colors.PrimaryContainer}
-                    style={styles.eachTopicsSelectedIcon}
-                  />
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ProgressStep>
-      </ProgressSteps>
+      <View style={styles.stepAdditionalInfoView}>
+        <TextInputMediumIcon
+          inputMode={"text"}
+          name={"Tên nhóm"}
+          icon={icons.personCircleIcon}
+          placeholder={"Nhập tên nhóm mới"}
+          isPassword={false}
+          onChangeText={(text) => setNewGroupName(text)}
+        />
+        <TextInputMediumIcon
+          inputMode={"text"}
+          name={"Mật khẩu gia nhập nhóm"}
+          icon={icons.phoneRingCircleIcon}
+          placeholder={"Nhập mật khẩu mới"}
+          isPassword={true}
+          onChangeText={(text) => setNewGroupPassword(text)}
+        />
+        <CommonButton onPress={() => handleCreateGroup()} title={"Hoàn tất"}/>
+      </View>
     );
   };
 
@@ -229,7 +119,6 @@ export default function TabYourGroups(props) {
         buttonOnPress={() => {
           setNewGroupName("");
           setNewGroupPassword("");
-          setNewGroupSelectedTopics([]);
           setModalVisible(true);
         }}
         buttonLength={"100%"}
@@ -277,47 +166,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
     marginBottom: 30,
-  },
-  //listTopics
-  listTopicsView: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-  },
-  eachTopicsView: {
-    width: "48%",
-    height: 100,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 10,
-    position: "relative",
-  },
-  eachTopicsImage: {
-    flex: 1,
-    width: "100%",
-    resizeMode: "stretch",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 15,
-  },
-  eachTopicsText: {
-    left: 5,
-    bottom: 0,
-    position: "absolute",
-    color: "white",
-    fontSize: fontSizes.h7,
-    fontWeight: "900",
-  },
-  eachTopicsSelected: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 15,
-    backgroundColor: "black",
-    opacity: 0.5,
-  },
-  eachTopicsSelectedIcon: {
-    top: 0,
-    right: 0,
-    position: "absolute",
   },
   //Buttons
   nextBtn: {
