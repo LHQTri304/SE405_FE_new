@@ -56,9 +56,9 @@ export default function AllNotification(props) {
               group={eachNotification}
               key={eachNotification.notifycationID}
               onPress={() => {
-                /* navigate("ShowNotificationOfUser", {
+                navigate("ShowNotificationOfUser", {
                   notification: eachNotification,
-                }); */
+                });
               }}
             />
           ))}

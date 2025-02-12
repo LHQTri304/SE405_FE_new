@@ -28,9 +28,6 @@ export default function CommentItems(props) {
 
   return (
     <View style={styles.container}>
-      {/* replyImages.map((image, index) => (
-        <Image key={index} source={{ uri: image }} style={styles.image} />
-      )) */}
       <TouchableOpacity onPress={onPress}>
         <Image
           style={styles.avatarContainer}
@@ -44,6 +41,9 @@ export default function CommentItems(props) {
           <Text style={[styles.text, styles.username]}>{fulName}</Text>
           <Text style={[styles.text, styles.content]}>{content}</Text>
         </View>
+        {replyImages.map((image, index) => (
+          <Image key={index} source={{ uri: image }} style={styles.image} />
+        ))}
         <View style={styles.bottomViewContainer}>
           <Text style={styles.time}>{getTime()}</Text>
           <FlexIconButton
@@ -130,14 +130,13 @@ const styles = StyleSheet.create({
     color: colors.GrayOnContainerAndFixed,
   },
   //
-  /*
   image: {
     width: 100,
     height: 100,
-    resizeMode: 'cover',
+    resizeMode: "cover",
     marginTop: 10,
     borderRadius: 5,
     //borderWidth: 3,
     //borderColor: colors.PrimaryBackground,
-  }, */
+  },
 });

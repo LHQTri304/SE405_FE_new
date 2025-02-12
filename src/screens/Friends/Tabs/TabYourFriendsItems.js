@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { images, icons, colors, fontSizes } from "../../../constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { friend_checkNewMessage } from "../../../api";
+import {
+  friend_checkNewMessage,
+  messenger_loadMessageforUser,
+} from "../../../api";
 
 export default TabYourFriendsItems = (props) => {
   let { fulName, image } = props.friend.information;
@@ -11,16 +14,33 @@ export default TabYourFriendsItems = (props) => {
 
   const avatar = image;
   const name = fulName;
-  const message = "latestMessage";
-  const timestamp = "timeSend";
+  const [message, setMessage] = useState("latestMessage");
+  const [timestamp, setTimestamp] = useState("timeSend");
+  const [dateSent, setDate] = useState("dateSend");
+  setTimestamp(
+    `${dateSent.getHours()}:${dateSent.getMinutes()} ${dateSent.getDate()}/${
+      dateSent.getMonth() + 1
+    }`
+  );
 
   const [isNewNotification, setIsNewNotification] = useState(false);
 
   useEffect(() => {
+    fetchData();
     checkNewNotification();
     const intervalId = setInterval(checkNewNotification, 1000);
     return () => clearInterval(intervalId);
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await messenger_loadMessageforUser(userName);
+      setMessage(response.data[0].content);
+      setDate(new Date(response.data[0].dateSent));
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const checkNewNotification = async () => {
     const response = await friend_checkNewMessage(userName);
@@ -45,9 +65,9 @@ export default TabYourFriendsItems = (props) => {
       <Image source={{ uri: avatar }} style={styles.avatar} />
       <View style={styles.messageContent}>
         <Text style={styles.name}>{name}</Text>
-        <Text style={styles.messageText}>{message}</Text>
+        {/* <Text style={styles.messageText}>{message}</Text> */}
       </View>
-      <Text style={styles.timestamp}>{timestamp}</Text>
+      {/* <Text style={styles.timestamp}>{timestamp}</Text> */}
     </TouchableOpacity>
   );
 };

@@ -12,6 +12,14 @@ export default function ReplyItems(props) {
   const [name, setN] = useState(props.reply.userName);
   //
 
+  const replyImages = [];
+
+  if (files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      replyImages.push(files[i].url);
+    }
+  }
+
   const MAXWidth = 245;
   const getWidth = (baseWidth) => {
     return baseWidth > MAXWidth ? MAXWidth : baseWidth;
@@ -31,17 +39,17 @@ export default function ReplyItems(props) {
 
   /* const ShowProfile = async () => {
     navigate("ShowProfile", { userReplied: userReplied });
-  };
+  }; */
 
   const handleShowPicture = () => {
     navigate("ShowPicture", { files: files });
-  }; */
+  };
 
   return (
       <View style={styles.container}>
-        {/* replyImages.map((image, index) => (
+        {replyImages.map((image, index) => (
           <Image key={index} source={{ uri: image }} style={styles.image} />
-        )) */}
+        ))}
         <TouchableOpacity /* onPress={ShowProfile} */>
           <Image
             style={styles.avatarContainer}
@@ -117,12 +125,12 @@ const styles = StyleSheet.create({
     color: colors.GrayOnContainerAndFixed,
   },
   //
-  /* image: {
+  image: {
     maxWidth: 245,
     resizeMode: "contain",
     marginVertical: 2,
     borderRadius: 5,
     //borderWidth: 3,
     //borderColor: colors.GrayBackground,
-  }, */
+  },
 });

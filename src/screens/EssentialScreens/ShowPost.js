@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
+  Dimensions,
 } from "react-native";
 import { images, icons, colors, fontSizes } from "../../constants";
 import { UIHeader, FlexIconButton, EnterMessageBar } from "../../components";
@@ -46,7 +47,27 @@ export default ShowPost = (props) => {
   const [header, setHeader] = useState("props.route.params.topic.header");
   //
 
+  //
+  const { width, height } = Dimensions.get("window");
+  const MAXWidth = width - 10;
+  const getWidth = (baseWidth) => {
+    if (baseWidth == 0) {
+      return MAXWidth;
+    }
+    return baseWidth > MAXWidth ? MAXWidth : baseWidth;
+  };
+  const getHeight = (baseWidth, baseHeight) => {
+    if (baseHeight == 0) {
+      return MAXWidth;
+    }
+    return baseWidth > MAXWidth
+      ? baseHeight / (baseWidth / MAXWidth)
+      : baseHeight;
+  };
+  //
+
   const parts = files.length > 0 ? files[0].url : null;
+  console.log(parts);
 
   //navigation
   const { navigate, goBack, push } = props.navigation;
@@ -219,6 +240,39 @@ export default ShowPost = (props) => {
         </View>
         {/* <Text style={styles.title}>{header}</Text> */}
         <Text style={styles.content}>{content}</Text>
+
+        <TouchableOpacity onPress={ShowPicture}>
+          {/* <Image
+            source={{ uri: parts }}
+            style={styles.image}
+          /> */}
+          {files.map((eachFile, index) => (
+            <View key={index} style={styles.imgView}>
+              {console.log(eachFile.height)}
+              <Image
+                source={{ uri: eachFile.url }}
+                style={[
+                  styles.image,
+                  {
+                    width: getWidth(eachFile.width),
+                    height: getHeight(eachFile.width, eachFile.height),
+                    maxWidth: MAXWidth,
+                  },
+                ]}
+              />
+              {/* {files.length == 0 ? (
+              <View />
+            ) : (
+              <TouchableOpacity
+                style={styles.redRemoveImg}
+                onPress={() => handleRemoveImageFromList(index)}
+              >
+              </TouchableOpacity>
+            )} */}
+            </View>
+          ))}
+        </TouchableOpacity>
+
         <View style={styles.bottomView}>
           <FlexIconButton
             onPress={() => {
@@ -244,31 +298,12 @@ export default ShowPost = (props) => {
           />
         </View>
 
-        {/* <TouchableOpacity onPress={ShowPicture}>
-          {<Image
-            source={{ uri: parts }}
-            style={styles.image}
-          />}
-          {files.map((eachFile, index) => (
-            <View key={index} style={styles.imgView}>
-              <Image
-                source={{ uri: eachFile.url }}
-                style={[
-                  styles.image, { width: imageWidth, height: imageHeight, maxWidth: MAXWidth, },
-                ]}
-              />
-              {files.length == 0 ? (
-                <View />
-              ) : (
-                <TouchableOpacity
-                  style={styles.redRemoveImg}
-                  onPress={() => handleRemoveImageFromList(index)}
-                ></TouchableOpacity>
-              )}
-            </View>
-          ))}
-        </TouchableOpacity> */}
-        <Comment blogID={blogID} navigation={props.navigation} isReplying={isReplying} setIsReplying={setIsReplying} />
+        <Comment
+          blogID={blogID}
+          navigation={props.navigation}
+          isReplying={isReplying}
+          setIsReplying={setIsReplying}
+        />
       </ScrollView>
 
       {isReplying ? (
@@ -317,7 +352,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     alignSelf: "center",
     color: colors.PrimaryObjects,
-  },
+  }, */
   image: {
     width: 350,
     height: 350,
@@ -327,7 +362,7 @@ const styles = StyleSheet.create({
     borderColor: "white",
     borderWidth: 5,
     alignSelf: "center",
-  }, */
+  },
   //
   topView: {
     flexDirection: "row",

@@ -83,7 +83,7 @@ export default function MainBottomTab(props) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
-        initialRouteName={!tabName ? "Chat" : tabName}
+        initialRouteName={!tabName ? "Account" : tabName}
         screenOptions={{
           headerShown: false,
           tabBarStyle: styles.barContainer,

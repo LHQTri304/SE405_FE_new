@@ -35,14 +35,14 @@ export default GameTab = (props) => {
       imageURL:
         "https://play-lh.googleusercontent.com/1VE6HgXUnF6rnvK-45r7robWnz7bAZ_IiY9-KGwrmxwK-3A93neMk4LPykKQx_vvGFw",
       gameScreen: "GameWordSort",
-    },
+    },/* 
     {
       id: 3,
       name: "Luyện Nghe Listening",
       imageURL:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyZVUbn-mA57CU1kuamnmpB99Eq-unWdonSA&s",
       gameScreen: "GameListening",
-    },
+    }, */
     {
       id: 4,
       name: "Đuổi Hình Bắt Chữ 2",

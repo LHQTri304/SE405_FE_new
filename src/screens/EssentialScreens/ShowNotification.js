@@ -270,10 +270,13 @@ const ShowNotification = (props) => {
           content={item.notifycationType == "user" ? "Trưởng nhóm" : "Hệ thống"}
         />
 
-        <SubjectBox
+        <ContentBox
           icon={icons.priceTagIcon}
           title="Tiêu đề"
           content={item.header}
+          OnPressContent={() => {
+            LoadItem();
+          }}
         />
 
         <ContentBox
